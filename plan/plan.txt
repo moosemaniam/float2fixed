@@ -1,0 +1,6 @@
+1)Make converstion routines to convert floating point code to any format
+  Eg: convert 2.3 to Q format 2.29 etc
+2)Take a small C program, say a mac operation using some data set of float
+values and convert it into fixed.Figure out the dynamic range , decide on the
+Q format to be used and then figure out how much of a error this Q format
+choice introduced

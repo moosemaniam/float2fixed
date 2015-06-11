@@ -37,7 +37,7 @@
 
 float convert_fix_to_flt(int num,int qformat)
 {
-   return(num/pow(2,qformat));
+    return(num/pow(2,qformat));
 }
 
 /**
@@ -55,6 +55,7 @@ int convert_flt_to_fix(float num,int Q)
     int fract_bits;
     int integer_bits;
     double temp2;
+
     double maxRepresentable=0.0;
     int i;
     int retFixed;
@@ -78,7 +79,7 @@ int convert_flt_to_fix(float num,int Q)
     minRepresentable = (float)(-1*(1 << integer_bits));
 
     /*Deal with positive numbers*/
-    if(1 || num > 0.0)
+    if( num > 0.0)
     {
         if((num < minRepresentable) || (num > maxRepresentable))
         {
@@ -87,15 +88,6 @@ int convert_flt_to_fix(float num,int Q)
                     num,Q,maxRepresentable,minRepresentable);
             exit(ERROR_NUM_OUT_OF_RANGE);
 
-        }
-
-        else
-        {
-            /*Else, Do the conversion*/
-
-            retFixed = (int)(num * ( 1 << fract_bits));
-            /*Return the fixed point value*/
-            return retFixed;
         }
     }
 }

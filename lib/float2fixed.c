@@ -12,6 +12,7 @@
 
 #define ERROR_DIVIDE_BY_ZERO (-1)
 #define ERROR_NUM_OUT_OF_RANGE (-2)
+#define ERROR_NOT_SUPPORTED (-3)
 //#include"datatypes.h"
 //
 #define MAXBITLENGTH (32)
@@ -40,29 +41,18 @@
  * sign bit        : 1 bit
  * :*/
 
+float convert_fix_to_flt(int num,int qformat)
+{
+   return(num/pow(2,qformat));
+}
+
 /**
  * @brief converts a floating point number to fixed point of a given * format
+ *
  * @param num floating point number to be converted
  * @param Q   Q format
+ *
  * @return  fixed point number
- * @note    exit with error if not possible
- */
-
-
-
-
-
-
-
-
-
-/** 
- * @brief converts a floating point number to fixed point of a given * format
- * 
- * @param num floating point number to be converted
- * @param Q   Q format
- * 
- * @return  fixed point number 
  * @note    exit with error if not possible
  */
 int convert_flt_to_fix(float num,int Q)
@@ -97,29 +87,43 @@ int convert_flt_to_fix(float num,int Q)
 
     minRepresentable = (float)(-1*(1 << integer_bits));
 
-    if((num < minRepresentable) || (num > maxRepresentable))
+    /*Deal with positive numbers*/
+    if(1 || num > 0.0)
     {
-        printf("Float number %0.10f is out of\
-                range:\nQ%d format:\nmax %.10f\nmin %0.10f\n",
-                num,Q,maxRepresentable,minRepresentable);
-        exit(ERROR_NUM_OUT_OF_RANGE);
+        if((num < minRepresentable) || (num > maxRepresentable))
+        {
+            printf("Float number %0.10f is out of\
+                    range:\nQ%d format:\nmax %.10f\nmin %0.10f\n",
+                    num,Q,maxRepresentable,minRepresentable);
+            exit(ERROR_NUM_OUT_OF_RANGE);
 
+        }
+
+        else
+        {
+            /*Else, Do the conversion*/
+
+            retFixed = (int)(num * ( 1 << fract_bits));
+            /*Return the fixed point value*/
+            return retFixed;
+        }
     }
-    else
-    {
-        /*Else, Do the conversion*/
-
-        retFixed = (int)(num * ( 1 << fract_bits));
-        /*Return the fixed point value*/
-        return retFixed;
-    }
-
 }
 
 int main()
 {
-    int val1 = convert_flt_to_fix(0.456,31);
-    int val2 = convert_flt_to_fix(0.4560000101,31);
+    int q = 30;
+    int val1 = convert_flt_to_fix(-0.876,q);
+    int val2 = convert_flt_to_fix(0.876,q);
+    int val3;
+    float fval1,fval2,fval3;
+    val3 = val1 + val2;
+    printf("val1 %x \nval2 %x\nval3 %x\n",val1,val2,val3);
+
+    fval1 = convert_fix_to_flt(val1,q);
+    fval2 = convert_fix_to_flt(val2,q);
+    fval3 = convert_fix_to_flt(val3,q);
+    printf("fval1 %.31f\nfval2 %.31f\n,fval3 %.31f\n",fval1,fval2,fval3);
     exit(0);
 
 }

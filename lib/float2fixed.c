@@ -10,13 +10,7 @@
 #include<stdio.h>
 #include<assert.h>
 
-#define ERROR_DIVIDE_BY_ZERO (-1)
-#define ERROR_NUM_OUT_OF_RANGE (-2)
-#define ERROR_NOT_SUPPORTED (-3)
-//#include"datatypes.h"
-//
-#define MAXBITLENGTH (32)
-
+#include "float2fixed.h"
 #define GEOM_SUM(N)\
     (1.0 - pow(2,-N))\
 
@@ -60,9 +54,6 @@ int convert_flt_to_fix(float num,int Q)
     float minRepresentable;
     int fract_bits;
     int integer_bits;
-    int sign_bits;
-    float temp;
-    float temp1;
     double temp2;
     double maxRepresentable=0.0;
     int i;
@@ -72,7 +63,6 @@ int convert_flt_to_fix(float num,int Q)
 
     fract_bits =  Q;
     integer_bits = MAXBITLENGTH - Q - 1;
-    sign_bits = 1;
 
     /*Decide if the current Q format can represent this number*/
     /*If not exit with error*/
@@ -110,20 +100,4 @@ int convert_flt_to_fix(float num,int Q)
     }
 }
 
-int main()
-{
-    int q = 30;
-    int val1 = convert_flt_to_fix(-0.876,q);
-    int val2 = convert_flt_to_fix(0.876,q);
-    int val3;
-    float fval1,fval2,fval3;
-    val3 = val1 + val2;
-    printf("val1 %x \nval2 %x\nval3 %x\n",val1,val2,val3);
 
-    fval1 = convert_fix_to_flt(val1,q);
-    fval2 = convert_fix_to_flt(val2,q);
-    fval3 = convert_fix_to_flt(val3,q);
-    printf("fval1 %.31f\nfval2 %.31f\n,fval3 %.31f\n",fval1,fval2,fval3);
-    exit(0);
-
-}

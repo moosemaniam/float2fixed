@@ -6,17 +6,20 @@
  * @date 2015-06-11
  */
 #include<math.h>
-#include"datatypes.h"
+#include<stdlib.h>
+#include<stdio.h>
+#include<assert.h>
 
-inline FLOAT geometric_sum(FLOAT a,FLOAT r, INT n)
-{
-    if(r==0)
-    {
-        printf("Tried to divide by 0. Exiting file: %s line %d function: %s\n",__FILE__,__LINE__,__FUNC__);
-            exit(ERROR_DIVIDE_BY_ZERO);
-    }
-    return(a*(1.0 - pow(r,n))/(1.0 - r));
-}
+#define ERROR_DIVIDE_BY_ZERO (-1)
+#define ERROR_NUM_OUT_OF_RANGE (-2)
+//#include"datatypes.h"
+//
+#define MAXBITLENGTH (32)
+
+#define GEOM_SUM(N)\
+    (1.0 - pow(2,-N))\
+
+
 
 /*Notes
  *
@@ -27,9 +30,9 @@ inline FLOAT geometric_sum(FLOAT a,FLOAT r, INT n)
  *
  * For a bit length of N. Q format "Q" ( assume Q < N )
  * fractional part : FRACT_BITS = Q bits
- * integer part    : INT_BITS=(N-Q-1) bits
+ * integer part    : int_BITS=(N-Q-1) bits
  * sign bit        : SIGN_BIT=1 bit
- * Max number      : 2^(FRACT_BITS-1) + GEOM_SUM(
+ * Max number      : 2^(FRACT_BITS-1) + geometric_sum(0.5,0.5,FRACT_BITS)
 
  * Ex: Q31 format
  * fractional part : 31 bits
@@ -44,13 +47,79 @@ inline FLOAT geometric_sum(FLOAT a,FLOAT r, INT n)
  * @return  fixed point number
  * @note    exit with error if not possible
  */
-//INT convert_flt_to_fix(FLOAT num,INT Q)
-//{
-//   /*Decide if the current Q format can represent this number*/
-//
-//    /*If not exit with error*/
-//
-//    /*Else, Do the conversion*/
-//
-//    /*Return the fixed point value*/
-//}
+
+
+
+
+
+
+
+
+
+/** 
+ * @brief converts a floating point number to fixed point of a given * format
+ * 
+ * @param num floating point number to be converted
+ * @param Q   Q format
+ * 
+ * @return  fixed point number 
+ * @note    exit with error if not possible
+ */
+int convert_flt_to_fix(float num,int Q)
+{
+    float minRepresentable;
+    int fract_bits;
+    int integer_bits;
+    int sign_bits;
+    float temp;
+    float temp1;
+    double temp2;
+    double maxRepresentable=0.0;
+    int i;
+    int retFixed;
+
+    assert(Q < MAXBITLENGTH);
+
+    fract_bits =  Q;
+    integer_bits = MAXBITLENGTH - Q - 1;
+    sign_bits = 1;
+
+    /*Decide if the current Q format can represent this number*/
+    /*If not exit with error*/
+
+    maxRepresentable= (float)( (1 << integer_bits)-1);
+
+    for(i=1;i<=Q;i++)
+    {
+        temp2 =  pow(2,-1*i);
+        maxRepresentable += temp2;
+    }
+
+    minRepresentable = (float)(-1*(1 << integer_bits));
+
+    if((num < minRepresentable) || (num > maxRepresentable))
+    {
+        printf("Float number %0.10f is out of\
+                range:\nQ%d format:\nmax %.10f\nmin %0.10f\n",
+                num,Q,maxRepresentable,minRepresentable);
+        exit(ERROR_NUM_OUT_OF_RANGE);
+
+    }
+    else
+    {
+        /*Else, Do the conversion*/
+
+        retFixed = (int)(num * ( 1 << fract_bits));
+        /*Return the fixed point value*/
+        return retFixed;
+    }
+
+}
+
+int main()
+{
+    int val1 = convert_flt_to_fix(0.456,31);
+    int val2 = convert_flt_to_fix(0.4560000101,31);
+    exit(0);
+
+}

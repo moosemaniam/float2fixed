@@ -89,7 +89,14 @@ int convert_flt_to_fix(float num,int Q)
             exit(ERROR_NUM_OUT_OF_RANGE);
 
         }
+        else
+        {
+            /*Else, Do the conversion*/
+
+            retFixed = (int)(num * ( 1 << fract_bits));
+            /*Return the fixed point value*/
+        }
     }
+
+            return retFixed;
 }
-
-
